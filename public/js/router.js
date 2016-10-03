@@ -7,6 +7,7 @@
 	class Router {
 		constructor(containerId) {
 			this.container = document.getElementById(containerId);
+
 		} 
 		//takes in a 'route' and renders to the container
 		navigate(route) {
@@ -25,10 +26,15 @@
 
 			//wait for state to be rendered
 			//then append the element to the view
-			// state.rendered((element) => {
-			// 	this.container.innerHTML = '';
-			// 	this.container.appendChild(element);
-			// })
+			state.rendered(
+				this.container.forEach((divContainer) => {
+					divContainer.firstChild()
+				})
+
+
+				// this.container.innerHTML = '';
+				// this.container.appendChild(element);
+			})
 		}
 	}
 	
