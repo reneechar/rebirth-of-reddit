@@ -8,17 +8,18 @@
 	 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 <body>
-	<div id='titleContainer'><img src='../assets/logo.svg'></div>
-	<nav>
+	<div id="container">
+		<div id='titleContainer'><img src="../assets/logo.svg"></div>
+		
 		<ul>
-			<div id='randomContainer'><li><a href="#Random" onClick="App.Router.navigate('random')">RANDOM</a></li></div>
-			<div id ='myBoardsContainer'><li><a href="#MyBoards" onClick="App.Router.navigate('myBoards')">MY BOARDS</a></li></div>
-			<div id ='getTheAppContainer'><li><a href="#GetTheApp" onClick="App.Router.navigate('getTheApp')">GET THE APP</a></li></div>
+			<div id='randomButton'><li><a href="#Random">RANDOM</a></li></div>
+			<div id ='myBoardsButton'><li><a href="#MyBoards">MY BOARDS</a></li></div>
+			<div id ='getTheAppButton'><li><a href="#GetTheApp">GET THE APP</a></li></div>
 
 		</ul>
-	</nav>
-	<div id='articleContainer'></div>
-
+		
+		<div id='content'></div>
+	</div>
 	
 	<script type="text/javascript" src='js/utils.js'></script>
 	<script type="text/javascript" src='js/router.js'></script>

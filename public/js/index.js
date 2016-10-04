@@ -1,84 +1,96 @@
 let topTitleContainer = document.getElementById('titleContainer');
-let logo = document.createElement('div');
-logo.id = 'logo';
-topTitleContainer.appendChild(logo);
+let articleSection = document.getElementById('content');
+
+let nextURL;
 
 
+let fetchedData = false;
 
-
-let firstArticleContainer = document.createElement('div');
-firstArticleContainer.id = 'container1';
-firstArticleContainer.className ='articleContainer';
-let textAreaFirst =  document.createElement('div');
-textAreaFirst.id = 'textAreaFirst';
-firstArticleContainer.appendChild(textAreaFirst);
-
-
-let articleContainer = document.getElementById('articleContainer');
-articleContainer.appendChild(firstArticleContainer);
-
-
-
-
-(function (window) {
+function displayArticles (url) {
+	fetchedData = false;
 	
-	App.utils.Get('https://www.reddit.com/r/food/.json',(data) => {
-		const parsedFirstData = JSON.parse(data);
-		let author = parsedFirstData.data.children[1].data.author;
-		let title = parsedFirstData.data.children[1].data.title;
-		let pictureData = parsedFirstData.data.children[1].data.preview.images[0].source.url;
-		if (pictureData === undefined) {
-			pictureData = 'http://www.freeiconspng.com/uploads/reddit-logo-icon-0.png';
+	App.utils.Get(url,(data) => {
+		
+		const parsedData = JSON.parse(data);
+
+		let i = 1;
+		if (url.substring(url.length-4) === 'json') {
+			nextURL = url+'?count=25&after=' + parsedData.data.after;
+		} else {
+			nextURL = url.substring(0,url.indexOf('after=')+6) + parsedData.data.after;
 		}
 
-		let titleContainer = document.createElement('h1');
-		let articleDetailsContainer = document.createElement('h4');
-		let picture = document.createElement('img');
-		picture.src = pictureData;
-		picture.style.width = '350px';
-		picture.style.height = '300px';
-		textAreaFirst.appendChild(picture);
-		textAreaFirst.appendChild(titleContainer);
-		textAreaFirst.appendChild(articleDetailsContainer);
-
-
-		titleContainer.innerHTML = title;
-		articleDetailsContainer.innerHTML += `by ${author}`;
-
-		let i = 2;
 		while(JSON.parse(data).data.children[i] !== undefined){
-			let subsequentArticleContainer = document.createElement('div');
-			subsequentArticleContainer.className ='articleContainer';
-			subsequentArticleContainer.id = 'container'+i;
-			let textAreaSubsequent =  document.createElement('div');
-			subsequentArticleContainer.appendChild(textAreaSubsequent);
+
+			let articleBox = document.createElement('div');
+			articleBox.className ='articleBox';
+			articleBox.id = 'container'+i;
+			let articleText =  document.createElement('div');
+			articleBox.appendChild(articleText);
 			
-			let subsequentTitleContainer = document.createElement('h1');
-			let subsequentDetailsContainer = document.createElement('h4');
-			let subsequentPictureData;
-			if (parsedFirstData.data.children[i].data.preview === undefined) {
-				subsequentPictureData = 'http://www.freeiconspng.com/uploads/reddit-logo-icon-0.png';
+			let articleTitle = document.createElement('h1');
+			let articleDetails = document.createElement('h4');
+			let pictureURL;
+			if (parsedData.data.children[i].data.preview === undefined) {
+				pictureURL = 'http://www.freeiconspng.com/uploads/reddit-logo-icon-0.png';
 			} else {
-				subsequentPictureData = parsedFirstData.data.children[i].data.preview.images[0].source.url;
+				pictureURL = parsedData.data.children[i].data.preview.images[0].source.url;
 			}
 
-			let subsequentPicture = document.createElement('img');
-			subsequentPicture.src = subsequentPictureData;
-			subsequentPicture.style.width = '350px';
-			subsequentPicture.style.height = '300px';
+			let picture = document.createElement('img');
+			picture.src = pictureURL;
+			picture.style.width = '350px';
+			picture.style.height = '300px';
 			
-			textAreaSubsequent.appendChild(subsequentPicture);
-			textAreaSubsequent.appendChild(subsequentTitleContainer);
-			textAreaSubsequent.appendChild(subsequentDetailsContainer);
-			articleContainer.appendChild(subsequentArticleContainer);
+			articleText.appendChild(picture);
+			articleText.appendChild(articleTitle);
+			articleText.appendChild(articleDetails);
+			articleSection.appendChild(articleBox);
 
 
-			const parsedSubsequentData = JSON.parse(data);
-			let subsequentAuthor = parsedSubsequentData.data.children[i].data.author;
-			let subsequentTitle = parsedSubsequentData.data.children[i].data.title;
-			subsequentTitleContainer.innerHTML = subsequentTitle +'<br>';
-			subsequentDetailsContainer.innerHTML += `by ${subsequentAuthor}`;
+			let author = parsedData.data.children[i].data.author;
+			let title = parsedData.data.children[i].data.title;
+			articleTitle.innerHTML = title +'<br>';
+			articleDetails.innerHTML += `by ${author}`;
 			i++;
 		}
+		fetchedData = true;
 	});
-}(window));
+}
+
+//initial onload display
+displayArticles('https://www.reddit.com/r/food/.json');
+
+//display another subreddit when clicking randomButton
+let randomButton = document.getElementById('randomButton');
+
+randomButton.addEventListener('click', () => {
+	while(articleSection.hasChildNodes()) {
+		articleSection.removeChild(articleSection.lastChild);
+	}
+	//need to be able to use iframes
+	// displayArticles(randomURL);
+});
+
+
+//display dbz for myboards
+
+let myBoards = document.getElementById('myBoardsButton');
+myBoards.addEventListener('click', () => {
+	while(articleSection.hasChildNodes()) {
+		articleSection.removeChild(articleSection.lastChild);
+	}
+	displayArticles('https://www.reddit.com/r/dbz/.json');
+
+});
+
+
+//adds more articles from the next page
+this.window.addEventListener('scroll', function(){
+let scrollTop = this.document.body.scrollTop;
+let windowHeight = this.document.body.clientHeight;
+let scrollPercentage = Math.round(scrollTop / windowHeight*10)/10;
+  if(scrollPercentage > 0.8 && fetchedData){
+		displayArticles(nextURL);
+  }
+});

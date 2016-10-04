@@ -26,19 +26,19 @@
 
 			//wait for state to be rendered
 			//then append the element to the view
-			state.rendered(
-				this.container.forEach((divContainer) => {
-					divContainer.firstChild()
-				})
+			// state.rendered(
+			// 	this.container.forEach((divContainer) => {
+			// 		divContainer.firstChild()
+			// 	})
 
 
 				// this.container.innerHTML = '';
 				// this.container.appendChild(element);
-			})
+			
 		}
 	}
 	
 
 
-	window.App.Router = new Router('articleContainer');
+	window.App.Router = new Router('container');
 }(window))
